@@ -231,7 +231,6 @@ def send_message(request):
         client = get_object_or_404(get_user_model(), id=client_id)
         ChatMessage.objects.create(client=client, manager=request.user, message=message_text)
 
-        # Отправка уведомлений менеджерам
         managers = get_user_model().objects.filter(role='MANAGER', receive_notifications=True)
         for manager in managers:
             notification = f"Новое сообщение от {client.username}"
