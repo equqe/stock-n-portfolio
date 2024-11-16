@@ -23,3 +23,11 @@ jobs:
       run: |
         docker-compose run --rm -w /app web python manage.py makemigrations
         docker-compose run --rm -w /app web python manage.py migrate
+
+    - name: Create superuser
+      run: |
+        docker-compose run --rm -w /app web python manage.py createsuperuser --noinput --username arsennazranov --email arsennazranov@gmail.com
+
+    - name: Run Daphne server
+      run: |
+        docker-compose run --rm -w /app web daphne -p 8000 stock.asgi:application
