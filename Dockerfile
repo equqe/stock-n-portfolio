@@ -33,10 +33,6 @@ COPY $SRC_PATH/app /app/app
 COPY $SRC_PATH/manage.py /app/manage.py
 COPY $SRC_PATH/static /app/static
 COPY $SRC_PATH/templates /app/templates
-COPY $SRC_PATH/fonts/arial.ttf /usr/share/fonts/truetype/
-
-# Update the font cache
-RUN fc-cache -f -v
 
 ENV SERVICE_DEBUG=False
 ENV SERVICE_DB_PATH=/data
