@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Редактирование актива</title>
+  <link rel="stylesheet" href="{% static 'main.css' %}">
+</head>
+<body>
+  <div class="container">
+    <main class="content">
+      <div class="header">
+        <h1>Редактирование актива</h1>
+      </div>
+      <div class="main-area">
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">Сохранить</button>
+        </form>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

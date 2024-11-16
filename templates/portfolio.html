@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Просмотр акций</title>
+  <link rel="stylesheet" href="{% static 'main.css' %}">
+  <style>
+    .sidebar ul li a {
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <ul>
+        <li>{{ username }} - Инвестор</li>
+        <li><a href="/logout/">Выход</a></li>
+        <li><a href="/password_reset/">Восстановить пароль</a></li>
+        <li><a href="/client/notifications/">Уведомления</a></li>
+        <li><a href="/client/portfolio/">Просмотр акций</a></li>
+        <li><a href="/client/chat/">Связь с менеджером</a></li>
+      </ul>
+    </aside>
+    <main class="content">
+      <div class="header">
+        <h1>Главная страница</h1>
+      </div>
+      <div class="main-area">
+        {% if investments %}
+          <table>
+            <thead>
+              <tr>
+                <th>Название инвестиции</th>
+                <th>Тип актива</th>
+                <th>Цена актива</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for investment in investments %}
+                <tr>
+                  <td>{{ investment.asset_name }}</td>
+                  <td>{{ investment.get_asset_type_display }}</td>
+                  <td>{{ investment.price }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p>Пока у вас нет акций...</p>
+        {% endif %}
+      </div>
+    </main>
+  </div>
+</body>
+</html>

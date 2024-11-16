@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Удаление активов</title>
+  <link rel="stylesheet" href="{% static 'main.css' %}">
+  <style>
+    .sidebar ul li a {
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <ul>
+        <li>{{ username }} - Админ</li>
+        <li><a href="/logout/">Выход</a></li>
+        <li><a href="/admin/users/">Просмотр информации о пользователях</a></li>
+        <li><a href="/admin/security/add/">Добавление активов</a></li>
+        <li><a href="/admin/security/remove/">Удаление активов</a></li>
+        <li><a href="/admin/analysis/">Страница анализа акций</a></li>
+      </ul>
+    </aside>
+    <main class="content">
+      <div class="header">
+        <h1>Удаление активов</h1>
+      </div>
+      <div class="main-area">
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <div id="security-info">
+            <p><strong>Название актива:</strong> <span id="asset-name"></span></p>
+            <p><strong>Тип актива:</strong> <span id="asset-type"></span></p>
+            <p><strong>Цена актива:</strong> <span id="asset-price"></span></p>
+          </div>
+          <button type="submit">Удалить</button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const securitySelect = document.getElementById('id_security');
+      const assetName = document.getElementById('asset-name');
+      const assetType = document.getElementById('asset-type');
+      const assetPrice = document.getElementById('asset-price');
+
+      securitySelect.addEventListener('change', function() {
+        const selectedSecurityId = securitySelect.value;
+        if (selectedSecurityId) {
+          fetch(`/admin/security/info/${selectedSecurityId}/`)
+            .then(response => response.json())
+            .then(data => {
+              assetName.textContent = data.asset_name;
+              assetType.textContent = data.asset_type;
+              assetPrice.textContent = data.price;
+            });
+        } else {
+          assetName.textContent = '';
+          assetType.textContent = '';
+          assetPrice.textContent = '';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

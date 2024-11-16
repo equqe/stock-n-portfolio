@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Главная страница</title>
+  <link rel="stylesheet" href="{% static 'main.css' %}">
+  <style>
+    .sidebar ul li a {
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <ul>
+        <li>{{ username }} - Админ</li>
+        <li><a href="/logout/">Выход</a></li>
+        <li><a href="/admin/users/">Просмотр информации о пользователях</a></li>
+        <li><a href="/admin/security/add/">Добавление активов</a></li>
+        <li><a href="/admin/security/remove/">Удаление активов</a></li>
+        <li><a href="/admin/analysis/">Страница анализа акций</a></li>
+      </ul>
+    </aside>
+    <main class="content">
+      <div class="header">
+        <h1>Главная страница</h1>
+      </div>
+      <div class="main-area">
+        <!-- Main content can go here -->
+      </div>
+    </main>
+  </div>
+</body>
+</html>
