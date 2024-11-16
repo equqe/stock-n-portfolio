@@ -2,13 +2,13 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres
+    image: postgres:latest
     environment:
-      POSTGRES_DB: "postgres"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-    expose:
-      - 5432
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
     networks:
       - web-network
 
@@ -18,17 +18,17 @@ services:
       - "80:80"
     depends_on:
       - web
-      - postgres
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     networks:
       - web-network
 
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    command: sh -c "wait-for-it.sh -t 15 postgres:5432 && python manage.py makemigrations app && python manage.py migrate && python manage.py createsuperuser --noinput --username arsennazranov --email arsennazranov@gmail.com && daphne -p 8000 stock.asgi:application"
     depends_on:
       - postgres
     networks:

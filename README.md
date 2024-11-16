@@ -15,7 +15,7 @@ cd stock-n-portfolio
 
 docker-compose build
 
-docker-compose up
+docker-compose up -d
 ```
 
 доступ - 127.0.0.1:8000
