@@ -31,6 +31,5 @@ docker-compose up -d
 пароль - arsennazranov
 
 общая админпанель: /op/admin
-там можно закреплять investmentsecurities
 
 ДЛЯ ЗАПУСКА ТРЕБУЕТСЯ УСТАНОВЛЕННЫЙ ДОКЕР

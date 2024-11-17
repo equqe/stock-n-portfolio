@@ -34,4 +34,4 @@ ENV SERVICE_DEBUG=False \
     SERVICE_PORT=8000
 
 # команда запуска контейнера
-CMD ["sh", "-c", "/app/wait-for-it.sh -t 15 postgres:5432 && python manage.py makemigrations app && python manage.py migrate && python manage.py createsuperuser --noinput --username arsennazranov --email arsennazranov@gmail.com && daphne -b 0.0.0.0 -p 8000 stock.asgi:application"]
+CMD ["sh", "-c", "/app/wait-for-it.sh -t 15 postgres:5432 && python manage.py makemigrations app && python manage.py migrate && python create_superuser.py && daphne -b 0.0.0.0 -p 8000 stock.asgi:application"]
