@@ -20,12 +20,13 @@
   <div class="container">
     <aside class="sidebar">
       <ul>
-        <li>{{ username }} - Админ</li>
+        <li><a href="/">{{ user.username }} - Менеджер</a></li>
         <li><a href="/logout/">Выход</a></li>
-        <li><a href="/admin/users/">Просмотр информации о пользователях</a></li>
-        <li><a href="/admin/security/add/">Добавление активов</a></li>
-        <li><a href="/admin/security/remove/">Удаление активов</a></li>
-        <li><a href="/admin/analysis/">Страница анализа акций</a></li>
+        <li><a href="/manager/settings/">Настройки</a></li>
+        <li><a href="/manager/analysis/">Страница анализа активов и портфелей</a></li>
+        <li><a href="/manager/portfoliosecurity/add/">Добавить актив в портфель</a></li>
+        <li><a href="/manager/portfoliosecurity/remove/">Удалить актив из портфеля</a></li>
+        <li><a href="/manager/chat/">Связь с клиентами</a></li>
       </ul>
     </aside>
     <main class="content">

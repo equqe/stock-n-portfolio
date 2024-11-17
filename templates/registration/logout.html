@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .logout-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .logout-container h1 {
+            font-size: 24px;
+            color: #3c4978;
+            margin-bottom: 0px;
+        }
+        .logout-container form {
+            display: inline-block;
+        }
+        .logout-container a {
+            color: #898ea2;
+            text-decoration: none;
+        }
+        .logout-container button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #3c4978;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .logout-container button:hover {
+            background-color: #2c3968;
+        }
+    </style>
+</head>
+<body>
+    <div class="logout-container">
+        <h1>Вы уверены, что хотите выйти?</h1>
+        <a href="/">Вернуться на главную страничку</a></li><br>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit">Выйти</button>
+        </form>
+    </div>
+</body>
+</html>

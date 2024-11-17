@@ -1,6 +1,8 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
+from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import post_save, pre_save
 
 class Profile(AbstractUser):
     DEFAULT = "DEFAULT"
@@ -70,3 +72,19 @@ class PortfolioSecurity(models.Model):
     portfolio = models.ForeignKey(InvestmentPortfolio, on_delete=models.CASCADE)
     security = models.ForeignKey(Security, on_delete=models.CASCADE)
     asset_quantity = models.IntegerField(null=False)
+
+@receiver(post_save, sender=PortfolioSecurity)
+def create_portfolio_notification(sender, instance, created, **kwargs):
+    if created:
+        user = instance.portfolio.user
+        Notification.objects.create(user=user, message="В ваш портфель добавлена новая акция. Перейдите в просмотр активов.")
+
+@receiver(pre_save, sender=Profile)
+def create_password_change_notification(sender, instance, **kwargs):
+    if instance.pk:
+        try:
+            old_password = Profile.objects.get(pk=instance.pk).password
+            if old_password != instance.password:
+                Notification.objects.create(user=instance, message="Ваш пароль был изменен.")
+        except Profile.DoesNotExist:
+            pass

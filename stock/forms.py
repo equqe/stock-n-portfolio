@@ -1,7 +1,7 @@
-from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from app.models import *
 from django.contrib.auth.models import User
+from django import forms
+from app.models import *
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField()
@@ -29,7 +29,25 @@ class SecurityForm(forms.ModelForm):
     class Meta:
         model = Security
         fields = ['asset_type', 'asset_name', 'price']
+        labels = {
+            'asset_type': 'Тип актива',
+            'asset_name': 'Название актива',
+            'price': 'Цена',
+        }
+
+class PortfolioSecurityForm(forms.ModelForm):
+    class Meta:
+        model = PortfolioSecurity
+        fields = ['portfolio', 'security', 'asset_quantity']
+        labels = {
+            'portfolio': 'Портфель',
+            'security': 'Название актива',
+            'asset_quantity': 'Количество',
+        }
 
 
 class DeleteSecurityForm(forms.Form):
     security = forms.ModelChoiceField(queryset=Security.objects.all(), label="Выберите актив для удаления")
+
+class DeletePortfolioSecurityForm(forms.Form):
+    portfoliosecurity = forms.ModelChoiceField(queryset=PortfolioSecurity.objects.all(), label="Выберите актив для удаления")

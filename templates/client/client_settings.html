@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Восстановление пароля</title>
+  <title>Настройки</title>
   <link rel="stylesheet" href="{% static 'main.css' %}">
   <style>
     .sidebar ul li a {
@@ -16,61 +16,47 @@
     }
     .main-area {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
       height: 100vh;
     }
-    form {
-      background-color: #fff;
-      padding: 40px;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 400px;
+    .main-area div {
+      margin-bottom: 10px;
     }
-    form h2 {
-      margin-bottom: 20px;
-      font-size: 24px;
-      color: #3c4978;
-      text-align: center;
-    }
-    form .form-group {
-      margin-bottom: 15px;
-    }
-    form .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 16px;
-      color: #3c4978;
-    }
-    form .form-group input {
-      width: 100%;
+    .main-area input[type="text"] {
+      width: 300px;
       padding: 10px;
       font-size: 16px;
-      border: 1px solid #ddd;
+      color: #242f57;
+      background-color: rgba(36, 47, 87, 0.1);
+      border: 1px solid #242f57;
       border-radius: 5px;
-      transition: border-color 0.3s ease;
     }
-    form .form-group input:focus {
-      border-color: #3c4978;
+    .main-area input[type="text"]::placeholder {
+      color: #242f57;
+      opacity: 0.5;
     }
-    form button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 15px;
-      font-size: 18px;
+    .main-area input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+    }
+    .main-area label {
+      font-size: 16px;
+      color: #242f57;
+    }
+    .main-area button {
+      padding: 10px 20px;
+      font-size: 16px;
       color: #fff;
-      background-color: #3c4978;
+      background-color: #242f57;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
     }
-    form button:hover {
-      background-color: #2c3968;
-    }
-    input {
-      border-radius: 5px;
+    .main-area button:hover {
+      background-color: #1a2342;
     }
   </style>
 </head>
@@ -78,7 +64,7 @@
   <div class="container">
     <aside class="sidebar">
       <ul>
-        <li><a href="/">Главная страница</a></li>
+        <li><a href="/">{{user.username}} - Инвестор</a></li>
         <li><a href="/logout/">Выход</a></li>
         <li><a href="/client/settings/">Настройки</a></li>
         <li><a href="/password_reset/">Восстановить пароль</a></li>
@@ -89,13 +75,18 @@
     </aside>
     <main class="content">
       <div class="header">
-        <h1>Восстановление пароля</h1>
+        <h1>Настройки</h1>
       </div>
       <div class="main-area">
-        <form method="post">
+        <form method="post" action="{% url 'settings' %}">
           {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit">Восстановить пароль</button>
+          <div>
+            <input type="text" id="first_name" name="first_name" placeholder="Имя" value="{{ user.first_name }}">
+          </div>
+          <div>
+            <input type="text" id="last_name" name="last_name" placeholder="Фамилия" value="{{ user.last_name }}">
+          </div>
+          <button type="submit">Изменить</button>
         </form>
       </div>
     </main>

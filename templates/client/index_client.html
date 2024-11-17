@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Анализ акций</title>
+  <title>Главная страница</title>
   <link rel="stylesheet" href="{% static 'main.css' %}">
   <style>
     .sidebar ul li a {
@@ -20,19 +20,21 @@
   <div class="container">
     <aside class="sidebar">
       <ul>
-        <li>{{ username }} - Менеджер</li>
+        <li><a href="/">{{ username }} - Инвестор</a></li>
         <li><a href="/logout/">Выход</a></li>
-        <li><a href="/manager/settings/">Настройки</a></li>
-        <li><a href="/manager/analysis/">Страница анализа акций и портфелей</a></li>
-        <li><a href="/manager/chat/">Связь с клиентами</a></li>
+        <li><a href="/client/settings/">Настройки</a></li>
+        <li><a href="/password_reset/">Восстановить пароль</a></li>
+        <li><a href="/client/notifications/">Уведомления</a></li>
+        <li><a href="/client/portfolio/">Просмотр акций</a></li>
+        <li><a href="/client/chat/">Связь с менеджером</a></li>
       </ul>
     </aside>
     <main class="content">
       <div class="header">
-        <h1>Анализ акций</h1>
+        <h1>Главная страница</h1>
       </div>
       <div class="main-area">
-        <img src="data:image/png;base64,{{ graphic }}" alt="Анализ акций">
+        <!-- Main content can go here -->
       </div>
     </main>
   </div>

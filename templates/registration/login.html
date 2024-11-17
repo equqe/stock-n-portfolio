@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация</title>
+    <title>Авторизация</title>
     <link rel="stylesheet" type="text/css" href="{% static '/css/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
             margin: 0;
@@ -13,20 +14,22 @@
             background: url('{% static "/images/trucks.jpg" %}') no-repeat center center fixed;
             background-size: cover;
             color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .auth {
             width: 300px;
-            margin: 100px auto;
             padding: 20px;
-            background: rgb(10 10 91 / 80%);
+            background: rgb(31 38 62 / 90%);
             border-radius: 15px;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
             text-align: center;
         }
         .auth h2 {
             margin-bottom: 20px;
             color: #fff;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
         }
         .input-container {
             margin: 15px 0;
@@ -35,25 +38,28 @@
             width: 90%;
             padding: 10px;
             border: none;
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
             text-align: center;
+        }
+        .input-container input::placeholder {
+            color: #fff;
+            opacity: 0.7;
         }
         .auth-btn {
             margin-top: 20px;
             padding: 10px 20px;
             border: none;
-            border-radius: 25px;
-            background: rgba(102, 102, 190, 0.7);
+            border-radius: 10px;
+            background: rgb(138 138 177 / 70%);
             color: #fff;
             font-size: 16px;
             cursor: pointer;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
             transition: background 0.3s;
         }
         .auth-btn:hover {
-            background: rgb(153 153 205 / 70%);
+            background: rgba(188, 188, 215, 0.7);
         }
         .acc-au {
             display: block;
@@ -65,27 +71,39 @@
         .acc-au:hover {
             text-decoration: underline;
         }
+        .bottom-container {
+            margin-top: 20px;
+        }
+        .errorlist {
+            color: rgb(169, 90, 90);
+            list-style: none;
+            padding: 0;
+        }
     </style>
 </head>
 <body>
     <form class="auth" method="post">
         {% csrf_token %}
-        <h2>РЕГИСТРАЦИЯ</h2>
-        <a class="acc-au" href="/login/">Уже есть аккаунт?</a>
+        <h2>АВТОРИЗАЦИЯ</h2>
+        <a class="acc-au" href="/register/">Нет аккаунта?</a>
         <div class="input-container">
-            <input type="text" placeholder="Логин" id="username" name="username" required>
+            <input type="text" placeholder="Username" id="username" name="username" required>
         </div>
         <div class="input-container">
-            <input type="email" placeholder="E-mail" id="email" name="email" required>
+            <input type="password" placeholder="Password" id="password" name="password" required>
         </div>
-        <div class="input-container">
-            <input type="password" placeholder="Пароль" id="password1" name="password1" required>
+        <div class="bottom-container">
+            <input type="submit" class="auth-btn" value="ВОЙТИ">
+            {% if form.errors %}
+                <ul class="errorlist">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
-        <div class="input-container">
-            <input type="password" placeholder="Повторите пароль" id="password2" name="password2" required>
-        </div>
-        <input type="submit" class="auth-btn" value="ЗАРЕГИСТРИРОВАТЬСЯ">
-        {{ form.errors }}
     </form>
 </body>
 </html>

@@ -1,5 +1,8 @@
 # stock-n-portfolio
 
+# В НЕКОТОРЫХ МОМЕНТАХ ДИЗАЙН НЕМНОГО ИЗМЕНЕН.
+## если потребуются изменения - напишите, в течение 10-15 минут после сообщения создам форк.
+
 figma template https://www.figma.com/design/68NEHfAxbe8I6v8GEyUmWc/Untitled?node-id=0-1&node-type=canvas
 
 используется asgi, вебсокеты для чата
@@ -20,9 +23,14 @@ docker-compose up -d
 
 доступ - 127.0.0.1:8000
 
+## если занят порт 8000 - докер не запустится. меняйте конфиги/убейте процесс по pid номеру, который занимает 8000 порт
+
 первый админ:
 почта - arsennazranov@gmail.com, 
 юзер - arsennazranov, 
 пароль - arsennazranov
 
 общая админпанель: /op/admin
+там можно закреплять investmentsecurities
+
+ДЛЯ ЗАПУСКА ТРЕБУЕТСЯ УСТАНОВЛЕННЫЙ ДОКЕР

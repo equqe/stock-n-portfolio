@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'channels',
 ]
 
+# async
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
@@ -137,20 +138,36 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# auth
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'app.Profile'
 
-DEFAULT_FROM_EMAIL = '7f52db001@smtp-brevo.com'
-EMAIL_HOST = 'smtp-relay.brevo.com'
+# SMTP
+DEFAULT_FROM_EMAIL = 'MS_KK1T99@trial-3z0vklo1o9vg7qrx.mlsender.net'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mailersend.net'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = '7f52db001@smtp-brevo.com'
-EMAIL_HOST_PASSWORD = 'nK8Nd19UbyLSOvqF'
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST_USER = 'MS_KK1T99@trial-3z0vklo1o9vg7qrx.mlsender.net'
+EMAIL_HOST_PASSWORD = 'Wx38g34G1u1CQp4K'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}

@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Уведомления</title>
+  <link rel="stylesheet" href="{% static 'main.css' %}">
+  <style>
+    .sidebar ul li a {
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+    }
+    .message {
+      margin-bottom: 10px;
+    }
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .chat-box {
+      flex: auto;
+      background-color: #f4f8ff;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+    .message {
+      margin-bottom: 15px;
+      display: flex;
+    }
+    .message.user {
+      justify-content: flex-end;
+    }
+    .message.manager {
+      justify-content: flex-start;
+    }
+    .message span {
+      display: inline-block;
+      max-width: 70%;
+      padding: 10px 15px;
+      border-radius: 15px;
+      word-wrap: break-word;
+    }
+    .message.user span {
+      background-color: #d7b3ff;
+      color: #000;
+      text-align: left;
+    }
+    .message.manager span {
+      background-color: #b3d7ff;
+      color: #000;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <ul>
+        <li><a href="/">{{ user.username }} - Инвестор</a></li>
+        <li><a href="/logout/">Выход</a></li>
+        <li><a href="/client/settings/">Настройки</a></li>
+        <li><a href="/password_reset/">Восстановить пароль</a></li>
+        <li><a href="/client/notifications/">Уведомления</a></li>
+        <li><a href="/client/portfolio/">Просмотр акций</a></li>
+        <li><a href="/client/chat/">Связь с менеджером</a></li>
+      </ul>
+    </aside>
+    <main class="content">
+      <div class="header">
+        <h1>Уведомления</h1>
+      </div>
+      <div class="main-area">
+        <div class="chat-box">
+          {% for notification in notifications %}
+            <div class="message manager">
+              <span>{{ notification.message }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

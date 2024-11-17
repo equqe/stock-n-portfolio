@@ -30,8 +30,9 @@
   <div class="container">
     <aside class="sidebar">
       <ul>
-        <li>{{ username }} - Инвестор</li>
+        <li><a href="/">{{user.username}} - Инвестор</a></li>
         <li><a href="/logout/">Выход</a></li>
+        <li><a href="/client/settings/">Настройки</a></li>
         <li><a href="/password_reset/">Восстановить пароль</a></li>
         <li><a href="/client/notifications/">Уведомления</a></li>
         <li><a href="/client/portfolio/">Просмотр акций</a></li>
@@ -80,13 +81,13 @@
       
         .chat-box {
           flex: auto;
-          background-color: #f4f8ff; /* Светло-голубой фон для чата */
+          background-color: #f4f8ff;
           border: 1px solid #ccc;
           border-radius: 10px;
           padding: 20px;
           overflow-y: auto;
           margin-bottom: 20px;
-          width: 100%; /* Чат занимает всю ширину блока */
+          width: 100%; 
         }
       
         .message {
@@ -95,29 +96,29 @@
         }
       
         .message.user {
-          justify-content: flex-end; /* Сообщения пользователя выравниваются вправо */
+          justify-content: flex-end;
         }
       
         .message.manager {
-          justify-content: flex-start; /* Сообщения менеджера выравниваются влево */
+          justify-content: flex-start;
         }
       
         .message span {
           display: inline-block;
-          max-width: 70%; /* Ограничение ширины сообщений */
+          max-width: 70%;
           padding: 10px 15px;
           border-radius: 15px;
           word-wrap: break-word;
         }
       
         .message.user span {
-          background-color: #d7b3ff; /* Фиолетовый цвет сообщений пользователя */
+          background-color: #d7b3ff;
           color: #000;
           text-align: left;
         }
       
         .message.manager span {
-          background-color: #b3d7ff; /* Голубой цвет сообщений менеджера */
+          background-color: #b3d7ff;
           color: #000;
           text-align: left;
         }
@@ -126,7 +127,7 @@
           display: flex;
           gap: 10px;
           margin-top: 10px;
-          width: 100%; /* Форма тоже занимает всю ширину */
+          width: 100%;
         }
       
         form input[type="text"] {

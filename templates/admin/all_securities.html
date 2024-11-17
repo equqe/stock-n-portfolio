@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Просмотр активов</title>
+  <link rel="stylesheet" href="{% static 'main.css' %}">
+  <style>
+    .sidebar ul li a {
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+    }
+    .main-area {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #3c4978;
+      color: #fff;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    .btn {
+      display: inline-block;
+      padding: 5px 10px;
+      margin: 2px;
+      font-size: 14px;
+      color: #fff;
+      background-color: #3c4978;
+      border: none;
+      border-radius: 3px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+    .btn:hover {
+      background-color: #2c3968;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <ul>
+        <li><a href="/">{{ user.username }} - Админ</a></li>
+        <li><a href="/logout/">Выход</a></li>
+        <li><a href="/admin/users/">Просмотр информации о пользователях</a></li>
+        <li><a href="/admin/security/add/">Добавление активов</a></li>
+        <li><a href="/admin/security/remove/">Удаление активов</a></li>
+        <li><a href="/admin/security/all/">Просмотр всех активов</a></li>
+        <li><a href="/admin/analysis/">Страница анализа активов</a></li>
+      </ul>
+    </aside>
+    <main class="content">
+      <div class="header">
+        <h1>Просмотр активов</h1>
+      </div>
+      <div class="main-area">
+        <table>
+          <thead>
+            <tr>
+              <th>ID актива</th>
+              <th>Название актива</th>
+              <th>Тип актива</th>
+              <th>Цена актива</th>
+              <!--<th>Действия</th>-->
+            </tr>
+          </thead>
+          <tbody>
+            {% for security in securities %}
+              <tr>
+                <td>{{ security.id }}</td>
+                <td>{{ security.asset_name }}</td>
+                <td>{{ security.get_asset_type_display }}</td>
+                <td>{{ security.price }}</td>
+                <!--<td>
+                  <a href="{% url 'edit_security' security.id %}" class="btn">Изменить</a>
+                  <a href="{% url 'delete_security' security.id %}" class="btn">Удалить</a>
+                </td>-->
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

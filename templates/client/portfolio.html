@@ -14,16 +14,28 @@
       text-decoration: none;
       color: inherit;
     }
+    .main-area {
+      overflow-x: auto;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
-    }
-    table, th, td {
-      border: 1px solid black;
+      margin-bottom: 20px;
     }
     th, td {
-      padding: 10px;
+      padding: 12px;
       text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #3c4978;
+      color: #fff;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
     }
   </style>
 </head>
@@ -31,8 +43,9 @@
   <div class="container">
     <aside class="sidebar">
       <ul>
-        <li>{{ username }} - Инвестор</li>
+        <li><a href="/">{{ username }} - Инвестор</a></li>
         <li><a href="/logout/">Выход</a></li>
+        <li><a href="/client/settings/">Настройки</a></li>
         <li><a href="/password_reset/">Восстановить пароль</a></li>
         <li><a href="/client/notifications/">Уведомления</a></li>
         <li><a href="/client/portfolio/">Просмотр акций</a></li>
@@ -44,21 +57,23 @@
         <h1>Главная страница</h1>
       </div>
       <div class="main-area">
-        {% if investments %}
+        {% if portfolio_securities %}
           <table>
             <thead>
               <tr>
                 <th>Название инвестиции</th>
                 <th>Тип актива</th>
                 <th>Цена актива</th>
+                <th>Количество</th>
               </tr>
             </thead>
             <tbody>
-              {% for investment in investments %}
+              {% for portfolio_security in portfolio_securities %}
                 <tr>
-                  <td>{{ investment.asset_name }}</td>
-                  <td>{{ investment.get_asset_type_display }}</td>
-                  <td>{{ investment.price }}</td>
+                  <td>{{ portfolio_security.security.asset_name }}</td>
+                  <td>{{ portfolio_security.security.get_asset_type_display }}</td>
+                  <td>{{ portfolio_security.security.price }}</td>
+                  <td>{{ portfolio_security.asset_quantity }}</td>
                 </tr>
               {% endfor %}
             </tbody>

@@ -14,18 +14,57 @@
       text-decoration: none;
       color: inherit;
     }
+    .main-area {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #3c4978;
+      color: #fff;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    .btn {
+      display: inline-block;
+      padding: 5px 10px;
+      margin: 2px;
+      font-size: 14px;
+      color: #fff;
+      background-color: #3c4978;
+      border: none;
+      border-radius: 3px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+    .btn:hover {
+      background-color: #2c3968;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <aside class="sidebar">
       <ul>
-        <li>{{ username }} - Админ</li>
+        <li><a href="/">{{ user.username }} - Админ</a></li>
         <li><a href="/logout/">Выход</a></li>
         <li><a href="/admin/users/">Просмотр информации о пользователях</a></li>
         <li><a href="/admin/security/add/">Добавление активов</a></li>
         <li><a href="/admin/security/remove/">Удаление активов</a></li>
-        <li><a href="/admin/analysis/">Страница анализа акций</a></li>
+        <li><a href="/admin/security/all/">Просмотр всех активов</a></li>
+        <li><a href="/admin/analysis/">Страница анализа активов</a></li>
       </ul>
     </aside>
     <main class="content">
@@ -51,8 +90,8 @@
                     <td>{{ portfolio_security.security.asset_type }}</td>
                     <td>{{ portfolio_security.security.price }}</td>
                     <td>
-                      <a href="{% url 'edit_security' portfolio_security.security.id %}">Изменить</a>
-                      <a href="{% url 'delete_security' portfolio_security.security.id %}">Удалить</a>
+                      <a href="{% url 'edit_security' portfolio_security.security.id %}" class="btn">Изменить</a>
+                      <a href="{% url 'delete_security' portfolio_security.security.id %}" class="btn">Удалить</a>
                     </td>
                   </tr>
                 {% endfor %}

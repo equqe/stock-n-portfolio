@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Анализ портфелей</title>
+  <title>Анализ акций</title>
   <link rel="stylesheet" href="{% static 'main.css' %}">
   <style>
     .sidebar ul li a {
@@ -20,32 +20,21 @@
   <div class="container">
     <aside class="sidebar">
       <ul>
-        <li>{{ username }} - Админ</li>
+        <li><a href="/">{{ user.username }} - Админ</a></li>
         <li><a href="/logout/">Выход</a></li>
         <li><a href="/admin/users/">Просмотр информации о пользователях</a></li>
         <li><a href="/admin/security/add/">Добавление активов</a></li>
         <li><a href="/admin/security/remove/">Удаление активов</a></li>
-        <li><a href="/admin/analysis/">Страница анализа акций</a></li>
+        <li><a href="/admin/security/all/">Просмотр всех активов</a></li>
+        <li><a href="/admin/analysis/">Страница анализа активов</a></li>
       </ul>
     </aside>
     <main class="content">
       <div class="header">
-        <h1>Анализ портфелей</h1>
+        <h1>Анализ акций</h1>
       </div>
       <div class="main-area">
-        <form method="post" action="{% url 'portfolio_analysis' %}">
-          {% csrf_token %}
-          <label for="user_id">Выберите пользователя:</label>
-          <select name="user_id" id="user_id">
-            {% for user in users %}
-              <option value="{{ user.id }}">{{ user.username }}</option>
-            {% endfor %}
-          </select>
-          <button type="submit">Показать диаграмму</button>
-        </form>
-        {% if graphic %}
-          <img src="data:image/png;base64,{{ graphic }}" alt="Анализ портфеля">
-        {% endif %}
+        <img src="data:image/png;base64,{{ graphic }}" alt="Анализ акций">
       </div>
     </main>
   </div>

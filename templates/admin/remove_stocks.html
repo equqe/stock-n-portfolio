@@ -14,18 +14,74 @@
       text-decoration: none;
       color: inherit;
     }
+    .main-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    form p {
+      margin-bottom: 15px;
+    }
+    form label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 16px;
+      color: #3c4978;
+    }
+    form select {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      transition: border-color 0.3s ease;
+    }
+    form select:focus {
+      border-color: #3c4978;
+    }
+    #security-info {
+      margin-bottom: 20px;
+    }
+    #security-info p {
+      margin: 5px 0;
+    }
+    form button {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      color: #fff;
+      background-color: #3c4978;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    form button:hover {
+      background-color: #2c3968;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <aside class="sidebar">
       <ul>
-        <li>{{ username }} - Админ</li>
+        <li><a href="/">{{ user.username }} - Админ</a></li>
         <li><a href="/logout/">Выход</a></li>
         <li><a href="/admin/users/">Просмотр информации о пользователях</a></li>
         <li><a href="/admin/security/add/">Добавление активов</a></li>
         <li><a href="/admin/security/remove/">Удаление активов</a></li>
-        <li><a href="/admin/analysis/">Страница анализа акций</a></li>
+        <li><a href="/admin/security/all/">Просмотр всех активов</a></li>
+        <li><a href="/admin/analysis/">Страница анализа активов</a></li>
       </ul>
     </aside>
     <main class="content">

@@ -1,33 +1,36 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
-from django.core.mail import send_mail
-from stock.forms import *
-from .models import *
-from stock.decorators import role_required
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse, HttpResponse 
 from channels.layers import get_channel_layer
+from stock.decorators import role_required
 from asgiref.sync import async_to_sync
+from django.core.mail import send_mail
 from django.db.models import Count
 import matplotlib.pyplot as plt
-import io
-import base64
+from stock.forms import *
+from .models import *
 import logging
+import base64
+import io
 
 def is_anonymous(user):
     return user.is_anonymous
 
-def send_test_email():
-    subject = 'Test Email'
-    message = 'This is a test email.'
-    from_email = '7f52db001@smtp-brevo.com'
-    to_list = ['oaouzc@gmail.com']
-    try:
-        send_mail(subject, message, from_email, to_list, fail_silently=False)
-        logger.info("Test email sent successfully.")
-    except Exception as e:
-        logger.error(f"Failed to send test email: {e}")
+# test new smtp servers
+# def send_test_email(request):
+#     subject = 'Test Email'
+#     message = 'This is a test email.'
+#     from_email = 'MS_KK1T99@trial-3z0vklo1o9vg7qrx.mlsender.net'
+#     to_list = ['YOURMAIL@YOURDOMAIN']
+#     try:
+#         send_mail(subject, message, from_email, to_list, fail_silently=False)
+#         logger.info("Test email sent successfully.")
+#         return HttpResponse("Test email sent successfully.")
+#     except Exception as e:
+#         logger.error(f"Failed to send test email: {e}")
+#         return HttpResponse("Failed to send test email.", status=500)
 
 # auth
 logger = logging.getLogger(__name__)
@@ -60,7 +63,7 @@ def signup(request):
                 return HttpResponse('405. Invalid credentials.', status=405)
     else:
         form = SignUpForm()
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form})
 
 @user_passes_test(is_anonymous, login_url='/')
 def signin(request):
@@ -82,14 +85,14 @@ def signin(request):
                 return HttpResponse('405. Invalid credentials.')
     else:
         form = LoginForm()
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'registration/login.html', {'form': form})
 
 @login_required
 def user_logout(request):
     if request.method == 'POST':
         logout(request)
         return redirect('/login')
-    return render(request, 'logout.html')
+    return render(request, 'registration/logout.html')
 
 # redirect
 @login_required
@@ -110,24 +113,56 @@ def index_client(request):
     context = {
         'username': request.user.username
     }
-    return render(request, 'index_client.html', context)
+    return render(request, 'client/index_client.html', context)
+
+@role_required(Profile.DEFAULT)
+def notifications(request):
+    notifications = Notification.objects.filter(user=request.user).order_by('created_at')
+    context = {
+        'username': request.user.username,
+        'notifications': notifications
+    }
+    return render(request, 'client/notifications.html', context)
 
 @role_required(Profile.DEFAULT)
 def portfolio_client(request):
-    investments = Security.objects.all()
+    portfolio, created = InvestmentPortfolio.objects.get_or_create(user=request.user)
+    portfolio_securities = PortfolioSecurity.objects.filter(portfolio=portfolio)
+
     context = {
         'username': request.user.username,
-        'investments': investments
+        'portfolio_securities': portfolio_securities
     }
-    return render(request, 'portfolio.html', context)
+    return render(request, 'client/portfolio.html', context)
+
+@role_required(Profile.DEFAULT)
+def client_settings(request):
+    if request.method == 'POST':
+        context = {
+            'username': request.user.username
+        }
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        user = request.user
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+        return redirect('/client/settings/')
+    return render(request, 'client/client_settings.html', {'user': request.user})
 
 # manager
 @role_required(Profile.MANAGER)
 def index_manager(request):
-    return render(request, 'index_manager.html')
+    context = {
+        'username': request.user.username
+    }
+    return render(request, 'manager/index_manager.html')
 
-@login_required
+@role_required(Profile.MANAGER)
 def settings(request):
+    context = {
+        'username': request.user.username
+    }
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
@@ -138,20 +173,93 @@ def settings(request):
         user.receive_notifications = receive_notifications
         user.save()
         return redirect('/manager/settings/')
-    return render(request, 'settings.html', {'user': request.user})
+    return render(request, 'manager/settings.html', {'user': request.user})
+
+@role_required(Profile.MANAGER)
+def add_to_portfolio(request):
+    context = {
+        'username': request.user.username
+    }
+    if request.method == 'POST':
+        form = PortfolioSecurityForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+    else:
+        form = PortfolioSecurityForm()
+    return render(request, 'manager/add_to_portfolio.html', {'form': form})
+
+@role_required(Profile.MANAGER)
+def remove_from_portfolio(request):
+    context = {
+        'username': request.user.username
+    }
+    if request.method == 'POST':
+        form = DeletePortfolioSecurityForm(request.POST)
+        if form.is_valid():
+            portfoliosecurity = form.cleaned_data['portfoliosecurity']
+            portfoliosecurity.delete()
+            return redirect('/')
+    else:
+        form = DeletePortfolioSecurityForm()
+    return render(request, 'manager/remove_from_portfolio.html', {'form': form})
+
+@role_required(Profile.MANAGER)
+def portfoliosecurity_info(request, portfoliosecurity_id):
+    portfoliosecurity = PortfolioSecurity.objects.get(id=portfoliosecurity_id)
+    data = {
+        'user_id': portfoliosecurity.portfolio.user.id,
+        'username': portfoliosecurity.portfolio.user.username,
+        'first_name': portfoliosecurity.portfolio.user.first_name,
+        'last_name': portfoliosecurity.portfolio.user.last_name,
+        'asset_type': portfoliosecurity.security.get_asset_type_display(),
+        'asset_name': portfoliosecurity.security.asset_name,
+        'price': portfoliosecurity.security.price,
+    }
+    return JsonResponse(data)
+
+@role_required(Profile.MANAGER)
+def portfolio_info(request, portfolio_id):
+    portfolio = InvestmentPortfolio.objects.get(portfolio_id=portfolio_id)
+    data = {
+        'user_id': portfolio.user.id,
+        'username': portfolio.user.username,
+        'first_name': portfolio.user.first_name,
+        'last_name': portfolio.user.last_name,
+    }
+    return JsonResponse(data)
+
+@role_required(Profile.MANAGER)
+def security_info(request, security_id):
+    security = Security.objects.get(id=security_id)
+    data = {
+        'asset_type': security.get_asset_type_display(),
+        'asset_name': security.asset_name,
+        'price': security.price,
+    }
+    return JsonResponse(data)
 
 # admin
 @role_required(Profile.ADMIN)
 def index_admin(request):
-    return render(request, 'index_admin.html')
+    context = {
+        'username': request.user.username
+    }
+    return render(request, 'admin/index_admin.html')
 
 @role_required(Profile.ADMIN)
 def user_info_view(request):
+    context = {
+        'username': request.user.username
+    }
     users = Profile.objects.all().order_by('id')
-    return render(request, 'user_info.html', {'users': users})
+    return render(request, 'admin/user_info.html', {'users': users})
 
 @role_required(Profile.ADMIN)
 def add_security(request):
+    context = {
+        'username': request.user.username
+    }
     if request.method == 'POST':
         form = SecurityForm(request.POST)
         if form.is_valid():
@@ -159,10 +267,13 @@ def add_security(request):
             return redirect('user_info')
     else:
         form = SecurityForm()
-    return render(request, 'add_stocks.html', {'form': form})
+    return render(request, 'admin/add_stocks.html', {'form': form})
 
 @role_required(Profile.ADMIN)
 def edit_security(request, security_id):
+    context = {
+        'username': request.user.username
+    }
     security = get_object_or_404(Security, id=security_id)
     if request.method == 'POST':
         form = SecurityForm(request.POST, instance=security)
@@ -171,18 +282,24 @@ def edit_security(request, security_id):
             return redirect('user_info')
     else:
         form = SecurityForm(instance=security)
-    return render(request, 'edit_security.html', {'form': form})
+    return render(request, 'admin/edit_security.html', {'form': form})
 
 @role_required(Profile.ADMIN)
 def delete_security(request, security_id):
+    context = {
+        'username': request.user.username
+    }
     security = get_object_or_404(Security, id=security_id)
     if request.method == 'POST':
         security.delete()
         return redirect('user_info')
-    return render(request, 'delete_security.html', {'security': security})
+    return render(request, 'admin/delete_security.html', {'security': security})
 
 @role_required(Profile.ADMIN)
 def remove_security(request):
+    context = {
+        'username': request.user.username
+    }
     if request.method == 'POST':
         form = DeleteSecurityForm(request.POST)
         if form.is_valid():
@@ -191,9 +308,13 @@ def remove_security(request):
             return redirect('user_info')
     else:
         form = DeleteSecurityForm()
-    return render(request, 'remove_stocks.html', {'form': form})
+    return render(request, 'admin/remove_stocks.html', {'form': form})
 
+@role_required(Profile.ADMIN)
 def get_security_info(request, security_id):
+    context = {
+        'username': request.user.username
+    }
     security = get_object_or_404(Security, id=security_id)
     data = {
         'asset_name': security.asset_name,
@@ -203,25 +324,24 @@ def get_security_info(request, security_id):
     return JsonResponse(data)
 
 # chat
-
-@login_required
+@role_required(Profile.DEFAULT)
 def chat_client(request):
     user = request.user
     messages = ChatMessage.objects.filter(client=user).order_by('timestamp')
-    return render(request, 'chat_client.html', {'messages': messages})
+    return render(request, 'client/chat_client.html', {'messages': messages})
 
-@login_required
+@role_required(Profile.MANAGER)
 def chat_manager(request):
     user = request.user
     clients = get_user_model().objects.filter(role='DEFAULT')
-    return render(request, 'chat_manager.html', {'clients': clients})
+    return render(request, 'manager/chat_manager.html', {'clients': clients})
 
-@login_required
+@role_required(Profile.MANAGER)
 def chat_manager_client(request, client_id):
     user = request.user
     client = get_object_or_404(get_user_model(), id=client_id)
     messages = ChatMessage.objects.filter(client=client).order_by('timestamp')
-    return render(request, 'chat_manager_client.html', {'messages': messages, 'client': client})
+    return render(request, 'manager/chat_manager_client.html', {'messages': messages, 'client': client})
 
 @login_required
 def send_message(request):
@@ -249,16 +369,25 @@ def send_message(request):
             return redirect('chat_manager_client', client_id=client.id)
 
 # analysis
-@login_required
+@role_required(Profile.MANAGER)
 def analysis(request):
-    return render(request, 'analysis.html')
+    context = {
+        'username': request.user.username
+    }
+    return render(request, 'manager/analysis.html')
     
-@login_required
+@role_required(Profile.ADMIN)
 def analysis_admin(request):
-    return render(request, 'analysis_admin.html')
+    context = {
+        'username': request.user.username
+    }
+    return render(request, 'admin/analysis_admin.html')
 
-@login_required
+@role_required(Profile.MANAGER)
 def stock_analysis(request):
+    context = {
+        'username': request.user.username
+    }
     securities = Security.objects.all()
     asset_types = securities.values('asset_type').annotate(count=Count('asset_type'))
 
@@ -276,16 +405,23 @@ def stock_analysis(request):
 
     graphic = base64.b64encode(image_png).decode('utf-8')
 
-    return render(request, 'stock_analysis.html', {'graphic': graphic})
+    return render(request, 'manager/stock_analysis.html', {'graphic': graphic})
 
-@login_required
+@role_required(Profile.MANAGER)
 def portfolio_analysis(request):
+    context = {
+        'username': request.user.username
+    }
     users = Profile.objects.filter(role='DEFAULT')
     if request.method == 'POST':
         user_id = request.POST.get('user_id')
         user = get_object_or_404(Profile, id=user_id)
-        portfolio = get_object_or_404(InvestmentPortfolio, user=user)
+
+        portfolio, created = InvestmentPortfolio.objects.get_or_create(user=user)
         portfolio_securities = PortfolioSecurity.objects.filter(portfolio=portfolio)
+        if not portfolio_securities.exists():
+            context['error_message'] = 'У клиента отсутствуют активы.'
+            return render(request, 'manager/portfolio_analysis.html', {'users': users, **context})
         asset_types = portfolio_securities.values('security__asset_type').annotate(count=Count('security__asset_type'))
 
         fig, ax = plt.subplots()
@@ -302,12 +438,15 @@ def portfolio_analysis(request):
 
         graphic = base64.b64encode(image_png).decode('utf-8')
 
-        return render(request, 'portfolio_analysis.html', {'graphic': graphic, 'users': users})
+        return render(request, 'manager/portfolio_analysis.html', {'graphic': graphic, 'users': users})
 
-    return render(request, 'portfolio_analysis.html', {'users': users})
+    return render(request, 'manager/portfolio_analysis.html', {'users': users})
 
-@login_required
+@role_required(Profile.ADMIN)
 def stock_analysis_admin(request):
+    context = {
+        'username': request.user.username
+    }
     securities = Security.objects.all()
     asset_types = securities.values('asset_type').annotate(count=Count('asset_type'))
 
@@ -325,16 +464,26 @@ def stock_analysis_admin(request):
 
     graphic = base64.b64encode(image_png).decode('utf-8')
 
-    return render(request, 'stock_analysis_admin.html', {'graphic': graphic})
+    return render(request, 'admin/stock_analysis_admin.html', {'graphic': graphic})
 
-@login_required
+@role_required(Profile.ADMIN)
 def portfolio_analysis_admin(request):
+    context = {
+        'username': request.user.username
+    }
     users = Profile.objects.filter(role='DEFAULT')
     if request.method == 'POST':
         user_id = request.POST.get('user_id')
         user = get_object_or_404(Profile, id=user_id)
-        portfolio = get_object_or_404(InvestmentPortfolio, user=user)
+
+        portfolio, created = InvestmentPortfolio.objects.get_or_create(user=user)
+
         portfolio_securities = PortfolioSecurity.objects.filter(portfolio=portfolio)
+
+        if not portfolio_securities.exists():
+            context['error_message'] = 'У клиента отсутствуют активы.'
+            return render(request, 'admin/portfolio_analysis_admin.html', {'users': users, **context})
+
         asset_types = portfolio_securities.values('security__asset_type').annotate(count=Count('security__asset_type'))
 
         fig, ax = plt.subplots()
@@ -351,6 +500,15 @@ def portfolio_analysis_admin(request):
 
         graphic = base64.b64encode(image_png).decode('utf-8')
 
-        return render(request, 'portfolio_analysis_admin.html', {'graphic': graphic, 'users': users})
+        return render(request, 'admin/portfolio_analysis_admin.html', {'graphic': graphic, 'users': users})
 
-    return render(request, 'portfolio_analysis_admin.html', {'users': users})
+    return render(request, 'admin/portfolio_analysis_admin.html', {'users': users})
+
+@role_required(Profile.ADMIN)
+def all_securities(request):
+    securities = Security.objects.all()
+    context = {
+        'username': request.user.username,
+        'securities': securities
+    }
+    return render(request, 'admin/all_securities.html', context)
